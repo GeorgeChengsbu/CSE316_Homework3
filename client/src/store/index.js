@@ -17,7 +17,9 @@ export const GlobalStoreActionType = {
     CLOSE_CURRENT_LIST: "CLOSE_CURRENT_LIST",
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE"
+    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
+    SET_MARKED_DELETE_LIST: "SET_MARKED_DELETE_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -31,8 +33,8 @@ export const useGlobalStore = () => {
         idNamePairs: [],
         currentList: null,
         newListCounter: 0,
-        listNameActive: false,
-        itemActive: false,
+        isListNameEditActive: false,
+        isItemEditActive: false,
         listMarkedForDeletion: null
     });
 
@@ -95,6 +97,26 @@ export const useGlobalStore = () => {
                     isItemEditActive: false,
                     listMarkedForDeletion: null
                 });
+            }
+            case GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: true,
+                    listMarkedForDeletion: null
+                });
+            }
+            case GlobalStoreActionType.SET_MARKED_DELETE_LIST: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: payload
+                })
             }
             default:
                 return store;
@@ -236,7 +258,25 @@ export const useGlobalStore = () => {
             payload: null
         });
     }
-
+    store.setIsItemEditActive = function () {
+        storeReducer({
+            type: GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE,
+            payload: null
+        });
+    }
+    store.handleDeleteModal = function (id) {
+        async function asyncgetListById(id) {
+            let response = await api.getTop5ListById(id);
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+                storeReducer({
+                    type: GlobalStoreActionType.SET_MARKED_DELETE_LIST,
+                    payload: top5List
+                });
+            }
+        }
+        asyncgetListById(id);
+    }
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }
