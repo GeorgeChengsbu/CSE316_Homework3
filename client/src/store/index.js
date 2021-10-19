@@ -277,6 +277,30 @@ export const useGlobalStore = () => {
         }
         asyncgetListById(id);
     }
+    store.deleteMarkedList = function() {
+        async function asyncDeleteList() {
+            try {
+                let response = await api.deleteTop5ListById(store.listMarkedForDeletion._id);
+            }
+            catch(error) {
+
+            }
+            finally{
+                store.loadIdNamePairs();
+                storeReducer({
+                    type: GlobalStoreActionType.SET_MARKED_DELETE_LIST,
+                    payload: null
+                });
+            }
+        }
+        asyncDeleteList();
+    }
+    store.addList = function() {
+        async function asyncAddList() {
+            console.log("E");
+        }
+        asyncAddList();
+    }
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }

@@ -17,6 +17,8 @@ function DeleteModal() {
     }
     function handleDeleteList(event) {
         store.deleteMarkedList();
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
     }
     function handleCloseModal(event) {
         let modal = document.getElementById("delete-modal");
