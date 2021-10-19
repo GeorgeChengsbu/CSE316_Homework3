@@ -21,7 +21,6 @@ function DeleteModal() {
         modal.classList.remove("is-visible");
     }
     function handleCloseModal(event) {
-        store.deleteMarkedList();
         let modal = document.getElementById("delete-modal");
         modal.classList.remove("is-visible");
     }
