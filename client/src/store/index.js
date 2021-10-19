@@ -102,7 +102,7 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: true,
@@ -123,7 +123,7 @@ export const useGlobalStore = () => {
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: null,
-                    newListCounter: (store.newListCounter + 1),
+                    newListCounter: (store.newListCounter++),
                     isListNameEditActive: store.isListNameEditActive,
                     isItemEditActive: store.isItemEditActive,
                     listMarkedForDeletion: store.listMarkedForDeletion
@@ -243,6 +243,10 @@ export const useGlobalStore = () => {
         // NOW MAKE IT OFFICIAL
         store.updateCurrentList();
     }
+    store.updateItemName = function (index, oldText, newText) {
+        store.currentList.items[index] = newText;
+        store.updateCurrentList();
+    }
     store.updateCurrentList = function() {
         async function asyncUpdateCurrentList() {
             const response = await api.updateTop5ListById(store.currentList._id, store.currentList);
@@ -320,15 +324,16 @@ export const useGlobalStore = () => {
                     name: UntitledName,
                     items: ["?", "?", "?", "?", "?"]
                 })
-            }
-            catch(error) {
-            }
-            finally{
                 store.loadIdNamePairs();
                 storeReducer({
                     type: GlobalStoreActionType.INCREASE_NEW_LIST_COUNTER,
                     payload: null
                 });
+                store.setCurrentList(response.data.top5List._id);
+            }
+            catch(error) {
+            }
+            finally{
             }
         }
         asyncAdditionList();

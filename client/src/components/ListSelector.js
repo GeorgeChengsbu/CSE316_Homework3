@@ -18,6 +18,7 @@ const ListSelector = () => {
 
     function handleAddList(event) {
         store.additionList();
+        
     }
     let listCard = "";
     if (store) {
