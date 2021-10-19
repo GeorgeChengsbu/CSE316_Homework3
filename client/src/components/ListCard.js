@@ -57,7 +57,6 @@ function ListCard(props) {
         let modal = document.getElementById("delete-modal");
         modal.classList.add("is-visible");
     }
-
     let selectClass = "unselected-list-card";
     if (selected) {
         selectClass = "selected-list-card";

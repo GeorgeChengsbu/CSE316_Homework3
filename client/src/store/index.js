@@ -19,7 +19,8 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
-    SET_MARKED_DELETE_LIST: "SET_MARKED_DELETE_LIST"
+    SET_MARKED_DELETE_LIST: "SET_MARKED_DELETE_LIST",
+    INCREASE_NEW_LIST_COUNTER: "INCREASE_NEW_LIST_COUNTER"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -116,6 +117,16 @@ export const useGlobalStore = () => {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: payload
+                })
+            }
+            case GlobalStoreActionType.INCREASE_NEW_LIST_COUNTER: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: null,
+                    newListCounter: (store.newListCounter + 1),
+                    isListNameEditActive: store.isListNameEditActive,
+                    isItemEditActive: store.isItemEditActive,
+                    listMarkedForDeletion: store.listMarkedForDeletion
                 })
             }
             default:
@@ -274,6 +285,13 @@ export const useGlobalStore = () => {
                     payload: top5List
                 });
             }
+            else {
+                let top5List = response.data.top5List;
+                storeReducer({
+                    type: GlobalStoreActionType.SET_MARKED_DELETE_LIST,
+                    payload: top5List
+                });
+            }
         }
         asyncgetListById(id);
     }
@@ -283,7 +301,6 @@ export const useGlobalStore = () => {
                 let response = await api.deleteTop5ListById(store.listMarkedForDeletion._id);
             }
             catch(error) {
-
             }
             finally{
                 store.loadIdNamePairs();
@@ -295,11 +312,26 @@ export const useGlobalStore = () => {
         }
         asyncDeleteList();
     }
-    store.addList = function() {
-        async function asyncAddList() {
-            console.log("E");
+    store.additionList = function() {
+        async function asyncAdditionList() {
+            let UntitledName = "Untitled" + store.newListCounter
+            try{
+                let response = await api.createTop5List({
+                    name: UntitledName,
+                    items: ["?", "?", "?", "?", "?"]
+                })
+            }
+            catch(error) {
+            }
+            finally{
+                store.loadIdNamePairs();
+                storeReducer({
+                    type: GlobalStoreActionType.INCREASE_NEW_LIST_COUNTER,
+                    payload: null
+                });
+            }
         }
-        asyncAddList();
+        asyncAdditionList();
     }
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };

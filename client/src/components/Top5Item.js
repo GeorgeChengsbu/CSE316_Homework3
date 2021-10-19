@@ -61,6 +61,7 @@ function Top5Item(props) {
                 type="button"
                 id={"edit-item-" + index + 1}
                 className="list-card-button"
+                onClick={}
                 value={"\u270E"}
             />
             {props.text}
