@@ -58,7 +58,7 @@ function Top5Item(props) {
     function handleEnterPress(event) {
         if (event.code === "Enter") {
             let oldText = store.currentList.items[index];
-            store.updateItemName(index, oldText, text);
+            store.addChangeItemTransaction(index, oldText, text);
             toggleItemEdit();
         }
     }
@@ -97,7 +97,7 @@ function Top5Item(props) {
         itemElement =
         <input
                 id={"item-"+(index+1)}
-                className='edit-items'
+                className={itemClass}
                 onKeyPress={handleEnterPress}
                 onChange={handleItemUpdateText}
                 defaultValue={store.currentList.items[index]}
