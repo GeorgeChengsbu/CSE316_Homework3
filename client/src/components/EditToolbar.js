@@ -10,43 +10,77 @@ import { useHistory } from 'react-router-dom'
 function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
+    let enabledButtonClassU = "top5-button";
+    let enabledButtonClassR = "top5-button";
+    let enabledButtonClassC = "top5-button";
 
-    let enabledButtonClass = "top5-button";
+    console.log(store.hasTransactionToUndo);
+    if (store.currentList === null) {
+        enabledButtonClassU = "top5-button-disabled";
+        enabledButtonClassR = "top5-button-disabled";
+        enabledButtonClassC = "top5-button-disabled";
+    }
+    if(store.isItemEditActive) {
+        enabledButtonClassU = "top5-button-disabled";
+        enabledButtonClassR = "top5-button-disabled";
+        enabledButtonClassC = "top5-button-disabled";
+    }
+    if (!store.checkTransactionToUndo()) {
+        enabledButtonClassU = "top5-button-disabled";
+    }
+    if (!store.checkTransactionToRedo()) {
+        console.log(store.hasTransactionToRedo);
+        enabledButtonClassR = "top5-button-disabled";
+    }
     function handleUndo() {
-        store.undo();
+        if (store.currentList !== null) {
+            if(!store.isItemEditActive) {
+                if (store.checkTransactionToUndo()) {
+                    store.undo();
+                    store.checkTransactionToUndo();
+                    store.checkTransactionToRedo();
+                }
+            }
+        }
     }
     function handleRedo() {
-        store.redo();
+        if (store.currentList !== null) {
+            store.checkTransactionToRedo();
+            if(!store.isItemEditActive) {
+                if (store.checkTransactionToRedo()) {
+                    store.redo();
+                    store.checkTransactionToRedo();
+                    store.checkTransactionToUndo();
+                }
+            }
+        }
     }
     function handleClose() {
-        history.push("/");
-        store.closeCurrentList();
-    }
-    let editStatus = false;
-    if (store.isListNameEditActive) {
-        editStatus = true;
+        if (store.currentList !== null) {
+            if(!store.isItemEditActive) {
+                history.push("/");
+                store.closeCurrentList();
+            }
+        }
     }
     return (
         <div id="edit-toolbar">
             <div
-                disabled={editStatus}
                 id='undo-button'
                 onClick={handleUndo}
-                className={enabledButtonClass}>
+                className={enabledButtonClassU}>
                 &#x21B6;
             </div>
             <div
-                disabled={editStatus}
                 id='redo-button'
                 onClick={handleRedo}
-                className={enabledButtonClass}>
+                className={enabledButtonClassR}>
                 &#x21B7;
             </div>
             <div
-                disabled={editStatus}
                 id='close-button'
                 onClick={handleClose}
-                className={enabledButtonClass}>
+                className={enabledButtonClassC}>
                 &#x24E7;
             </div>
         </div>

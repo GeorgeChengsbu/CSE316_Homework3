@@ -18,7 +18,7 @@ const ListSelector = () => {
 
     function handleAddList(event) {
         store.additionList();
-        
+
     }
     let listCard = "";
     if (store) {
@@ -30,10 +30,15 @@ const ListSelector = () => {
             />
         ))
     }
+    let cardStatus = false;
+    if (store.isListNameEditActive) {
+        cardStatus = true;
+    }
     return (
         <div id="top5-list-selector">
             <div id="list-selector-heading">
                 <input
+                    disabled = {cardStatus}
                     type="button"
                     id="add-list-button"
                     className="top5-button"

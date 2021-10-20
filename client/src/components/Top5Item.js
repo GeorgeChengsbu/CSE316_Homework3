@@ -41,6 +41,7 @@ function Top5Item(props) {
 
         // UPDATE THE LIST
         store.addMoveItemTransaction(sourceId, targetId);
+        store.checkTransactionToUndo();
     }
     function handleToggleItemEdit(event) {
         toggleItemEdit();
@@ -49,6 +50,9 @@ function Top5Item(props) {
         let newActive = !editActive;
         if (newActive) {
             store.setIsItemEditActive();
+        }
+        else {
+            store.setIsItemEditInactive();
         }
         setEditActive(newActive);
     }
@@ -60,6 +64,7 @@ function Top5Item(props) {
             let oldText = store.currentList.items[index];
             store.addChangeItemTransaction(index, oldText, text);
             toggleItemEdit();
+            store.checkTransactionToUndo();
         }
     }
 
@@ -72,6 +77,9 @@ function Top5Item(props) {
     if (store.isItemEditActive) {
         cardStatus = true;
     }
+    if (cardStatus) {
+        itemClass = 'top5-item ' + "disabled";
+    }
     let itemElement =
             <div
                 id={'item-' + (index + 1)}
@@ -81,7 +89,7 @@ function Top5Item(props) {
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                draggable="true"
+                draggable={!cardStatus}
             >
                 <input
                     disabled = {cardStatus}
@@ -97,7 +105,7 @@ function Top5Item(props) {
         itemElement =
         <input
                 id={"item-"+(index+1)}
-                className={itemClass}
+                className={"top5-item"}
                 onKeyPress={handleEnterPress}
                 onChange={handleItemUpdateText}
                 defaultValue={store.currentList.items[index]}

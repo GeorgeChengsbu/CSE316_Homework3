@@ -16,6 +16,7 @@ function ListCard(props) {
     const { idNamePair, selected } = props;
 
     function handleLoadList(event) {
+        if (!cardStatus) {
         if (!event.target.disabled) {
             let _id = event.target.id;
             if (_id.indexOf('list-card-text-') >= 0)
@@ -23,6 +24,7 @@ function ListCard(props) {
 
             // CHANGE THE CURRENT LIST
             store.setCurrentList(_id);
+        }
         }
     }
 
@@ -41,9 +43,17 @@ function ListCard(props) {
 
     function handleKeyPress(event) {
         if (event.code === "Enter") {
+            try {
             let id = event.target.id.substring("list-".length);
+            setText(event.target.value);
             store.changeListName(id, text);
-            toggleEdit();
+            }
+            catch(error){
+            }
+            finally{
+                setEditActive(false);
+                toggleEdit();
+            }
         }
     }
 
@@ -58,6 +68,9 @@ function ListCard(props) {
         modal.classList.add("is-visible");
     }
     let selectClass = "unselected-list-card";
+    if (store.isListNameEditActive) {
+        selectClass = "disabled";
+    }
     if (selected) {
         selectClass = "selected-list-card";
     }
